@@ -7,17 +7,20 @@ const NewUserModal = ({
   setNewUserModal,
   setLoading,
   getUsers,
+  setAlert,
 }) => {
   const [newUser, setNewUser] = useState({
     name: "",
     surname: "",
     occupation: "",
     email: "",
-    salary: 0,
+    salary: "",
   });
 
+  console.log(newUser);
   const addUser = async ({ name, surname, occupation, email, salary }) => {
     setLoading(true);
+
     try {
       const response = await axios.post(
         "http://www.workersappur.somee.com/api/workers",
@@ -29,15 +32,25 @@ const NewUserModal = ({
           salary,
         }
       );
+      console.log(response);
+
+      const refUsers = await getUsers();
       setNewUserModal(false);
-      getUsers();
       setTimeout(() => {
-        alert(`użytkownik ${name} ${surname} został dodany`);
-      }, 200);
+        setAlert({
+          message: "Użytkownik został dodany",
+          type: "success",
+          visible: true,
+        });
+      }, 150);
     } catch (error) {
       console.log(error.message);
       setLoading(false);
-      alert(`użytkownik ${name} ${surname} nie został został dodany`);
+      setAlert({
+        message: "Coś poszło nie tak",
+        type: "error",
+        visible: true,
+      });
     }
   };
 

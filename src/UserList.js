@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Typography, Row, Col, Card, Button, Empty } from "antd";
+import { Typography, Row, Col, Card, Button, Empty, Alert } from "antd";
+import { MessageOutlined } from "@ant-design/icons";
+import { FaEnvelope } from "react-icons/fa";
 import User from "./User";
 import NewUserModal from "./NewUserModal";
 import Loading from "./Loading";
@@ -9,8 +11,16 @@ const { Title } = Typography;
 
 const UserList = () => {
   const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState();
+  const [users, setUsers] = useState([]);
   const [newUserModal, setNewUserModal] = useState(false);
+  const [editUserModal, setEditUserModal] = useState(false);
+  const [emailModal, setEmailModal] = useState(false);
+  const [alert, setAlert] = useState({
+    message: "xdsdsd",
+    type: "warning",
+    visible: false,
+  });
+  const [emailLen, setEmailLen] = useState(0);
 
   const getUsers = async () => {
     try {
@@ -19,6 +29,7 @@ const UserList = () => {
       );
 
       const data = response.data;
+      console.log(data);
       setUsers(data);
 
       setLoading(false);
@@ -32,12 +43,49 @@ const UserList = () => {
     getUsers();
   }, []);
 
+  useEffect(() => {
+    if (alert.visible) {
+      setTimeout(() => {
+        setAlert({ ...alert, visible: false });
+      }, 3000);
+    }
+  }, [alert.visible]);
+
   return users ? (
     <div className="table">
-      <Row style={{ marginBottom: "10px" }} justify="end">
-        <Button onClick={() => setNewUserModal(true)} type="primary">
-          Dodaj użytkownika
-        </Button>
+      <div className="alert">
+        {alert.visible ? (
+          <Alert
+            style={{ padding: "20px 20px", fontSize: "15px" }}
+            onClick={() => setAlert({ ...alert, visible: false })}
+            message={alert.message}
+            type={alert.type}
+          />
+        ) : null}
+      </div>
+      <Row style={{ marginBottom: "10px" }} justify="space-between">
+        <Col>
+          {" "}
+          <Button
+            size="large"
+            shape="round"
+            onClick={() => setNewUserModal(true)}
+            type="primary"
+          >
+            Dodaj użytkownika
+          </Button>
+          <Button
+            onClick={() => setEmailModal(true)}
+            style={{ marginLeft: "20px" }}
+            shape="round"
+            size="large"
+            disabled={emailLen < 1}
+            type="primary"
+          >
+            Wyślij wiadomość
+          </Button>
+        </Col>
+        <Col></Col>
       </Row>
 
       {newUserModal ? (
@@ -46,10 +94,15 @@ const UserList = () => {
           setNewUserModal={setNewUserModal}
           setLoading={setLoading}
           getUsers={getUsers}
+          setAlert={setAlert}
         />
       ) : null}
+
       <Card style={{ backgroundColor: "#fafafa" }}>
         <Row justify="space-between" align="middle">
+          <Col>
+            <FaEnvelope style={{ fontSize: "20px" }} />
+          </Col>
           <Col>
             <Title level={5}>Imie</Title>
           </Col>
@@ -74,7 +127,18 @@ const UserList = () => {
         {users.length < 1 ? (
           <Empty style={{ marginTop: "80px" }} />
         ) : (
-          <User getUsers={getUsers} users={users} />
+          <User
+            emailModal={emailModal}
+            setEmailModal={setEmailModal}
+            setEmailLen={setEmailLen}
+            emailLen={emailLen}
+            getUsers={getUsers}
+            users={users}
+            setAlert={setAlert}
+            setEditUserModal={setEditUserModal}
+            editUserModal={editUserModal}
+            setLoading={setLoading}
+          />
         )}
       </div>
     </div>
