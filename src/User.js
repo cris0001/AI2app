@@ -33,7 +33,8 @@ const User = ({
   const [emailList, setEmailList] = useState([]);
 
   const deleteUser = async (id) => {
-    if (emailList.includes(id)) {
+    let allIds = emailList.map((email) => email.id);
+    if (allIds.includes(id)) {
       setAlert({
         message: "Odznacz użytkownika aby go usunąć!",
         type: "warning",
@@ -47,6 +48,7 @@ const User = ({
         );
 
         getUsers();
+        setEmailList([]);
         setTimeout(() => {
           setAlert({
             message: "Użytkownik usunięty ",
@@ -83,7 +85,14 @@ const User = ({
     }
   };
 
-  const editUser = async ({ publicId, name, surname, occupation, email, salary }) => {
+  const editUser = async ({
+    publicId,
+    name,
+    surname,
+    occupation,
+    email,
+    salary,
+  }) => {
     if (
       checkName(name) &&
       checkSurname(surname) &&
@@ -193,7 +202,9 @@ const User = ({
             <Row justify="space-between" align="middle">
               <Col span={1}>
                 <Checkbox
-                  checked={emailList.filter((e) => e.id === user.publicId).length > 0}
+                  checked={
+                    emailList.filter((e) => e.id === user.publicId).length > 0
+                  }
                   onChange={(e) => {
                     if (e.target.checked) {
                       setEmailList([
@@ -205,7 +216,9 @@ const User = ({
                       ]);
                       setEmailLen(emailLen + 1);
                     } else {
-                      const newList = emailList.filter((e) => e.id !== user.publicId);
+                      const newList = emailList.filter(
+                        (e) => e.id !== user.publicId
+                      );
                       setEmailList(newList);
                       setEmailLen(emailLen - 1);
                     }
@@ -237,7 +250,9 @@ const User = ({
                       }}
                       style={{ border: "none" }}
                     >
-                      <EditOutlined style={{ color: "#1890ff", fontSize: "20px" }} />
+                      <EditOutlined
+                        style={{ color: "#1890ff", fontSize: "20px" }}
+                      />
                     </Button>
                   </Col>
                   <Col>
