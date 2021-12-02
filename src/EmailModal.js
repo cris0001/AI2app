@@ -3,19 +3,25 @@ import { Modal, Input, Tag } from "antd";
 import axios from "axios";
 
 const { TextArea } = Input;
-const EmailModal = ({ setEmailModal, emailList, emailModal, setAlert }) => {
-  const [ids, setIds] = useState(emailList);
+const EmailModal = ({
+  setEmailModal,
+  emailList,
+  emailModal,
+  setAlert,
+  setEmailList,
+  setEmailLen,
+  emailLen,
+}) => {
+  const [ids, setIds] = useState(emailList.map((item) => item.id));
   const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
+  console.log(emailList);
 
   const email = { subject, title, message, ids };
-  console.log(email);
+  //console.log(email);
 
   const sendEmail = async ({ subject, title, message, ids }) => {
-    console.log(subject);
-    console.log(title);
-    console.log(message);
     console.log(ids);
     try {
       const response = await axios.post(
@@ -36,6 +42,7 @@ const EmailModal = ({ setEmailModal, emailList, emailModal, setAlert }) => {
           visible: true,
         });
       }, 150);
+      setEmailList([]);
     } catch (error) {
       console.log(error.message);
 
@@ -55,15 +62,32 @@ const EmailModal = ({ setEmailModal, emailList, emailModal, setAlert }) => {
         title="Grupowe wysyłanie wiadomości"
         visible={emailModal}
         onOk={() => sendEmail(email)}
-        onCancel={() => setEmailModal(false)}
+        onCancel={() => {
+          setEmailModal(false);
+          setEmailList([]);
+          setEmailLen(0);
+        }}
         okText="wyślij"
         cancelText="anuluj"
       >
         <div className="tag">
           {emailList.map((item, index) => {
             return (
-              <Tag key={index} color="blue" closable>
-                {item}
+              <Tag
+                onClose={() => {
+                  const newList = [...emailList].filter(
+                    (e) => e.id !== item.id
+                  );
+                  console.log(newList);
+                  setEmailList(newList);
+                  setIds(newList.map((item) => item.id));
+                  setEmailLen(emailLen - 1);
+                }}
+                key={index}
+                color="blue"
+                closable
+              >
+                {item.name}
               </Tag>
             );
           })}

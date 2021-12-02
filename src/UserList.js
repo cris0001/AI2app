@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Typography, Row, Col, Card, Button, Empty, Alert } from "antd";
-import { MessageOutlined } from "@ant-design/icons";
 import { FaEnvelope } from "react-icons/fa";
 import User from "./User";
 import NewUserModal from "./NewUserModal";
@@ -10,7 +9,7 @@ import Loading from "./Loading";
 const { Title } = Typography;
 
 const UserList = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState();
   const [users, setUsers] = useState([]);
   const [newUserModal, setNewUserModal] = useState(false);
   const [editUserModal, setEditUserModal] = useState(false);
@@ -32,15 +31,17 @@ const UserList = () => {
       console.log(data);
       setUsers(data);
 
-      setLoading(false);
+      //setLoading(false);
     } catch (error) {
       console.log(error.message);
-      setLoading(false);
+      //setLoading(false);
     }
   };
 
   useEffect(() => {
+    setLoading(true);
     getUsers();
+    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -51,7 +52,9 @@ const UserList = () => {
     }
   }, [alert.visible]);
 
-  return users ? (
+  return loading ? (
+    <Loading />
+  ) : users ? (
     <div className="table">
       <div className="alert">
         {alert.visible ? (
@@ -68,7 +71,6 @@ const UserList = () => {
           {" "}
           <Button
             size="large"
-            shape="round"
             onClick={() => setNewUserModal(true)}
             type="primary"
           >
@@ -77,7 +79,6 @@ const UserList = () => {
           <Button
             onClick={() => setEmailModal(true)}
             style={{ marginLeft: "20px" }}
-            shape="round"
             size="large"
             disabled={emailLen < 1}
             type="primary"
@@ -100,31 +101,31 @@ const UserList = () => {
 
       <Card style={{ backgroundColor: "#fafafa" }}>
         <Row justify="space-between" align="middle">
-          <Col>
+          <Col span={1}>
             <FaEnvelope style={{ fontSize: "20px" }} />
           </Col>
-          <Col>
+          <Col span={3}>
             <Title level={5}>Imie</Title>
           </Col>
-          <Col>
+          <Col span={3}>
             <Title level={5}>Nazwisko</Title>
           </Col>
-          <Col>
+          <Col span={3}>
             <Title level={5}>Stanowisko</Title>
           </Col>
-          <Col>
+          <Col span={5}>
             <Title level={5}>Email</Title>
           </Col>
-          <Col>
+          <Col span={2}>
             <Title level={5}>Pensja</Title>
           </Col>
-          <Col>
+          <Col span={2}>
             <Title level={5}>Edytuj/usuń</Title>
           </Col>
         </Row>
       </Card>
       <div>
-        {users.length < 1 ? (
+        {users.length < 1 && !loading ? (
           <Empty style={{ marginTop: "80px" }} />
         ) : (
           <User
@@ -142,8 +143,6 @@ const UserList = () => {
         )}
       </div>
     </div>
-  ) : (
-    <div>{loading ? <Loading /> : <Loading />}</div>
-  );
+  ) : null;
 };
 export default UserList;

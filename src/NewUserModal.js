@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Input } from "antd";
 import axios from "axios";
+import "./App.css";
+import { checkName, checkSurname, checkOccupation, checkEmail } from "./utils";
 
 const NewUserModal = ({
   newUserModal,
@@ -19,44 +21,50 @@ const NewUserModal = ({
 
   console.log(newUser);
   const addUser = async ({ name, surname, occupation, email, salary }) => {
-    setLoading(true);
+    if (
+      checkName(name) &&
+      checkSurname(surname) &&
+      checkOccupation(occupation) &&
+      checkEmail(email)
+    ) {
+      try {
+        const response = await axios.post(
+          "http://www.workersappur.somee.com/api/workers",
+          {
+            name,
+            surname,
+            occupation,
+            email,
+            salary,
+          }
+        );
+        console.log(response);
 
-    try {
-      const response = await axios.post(
-        "http://www.workersappur.somee.com/api/workers",
-        {
-          name,
-          surname,
-          occupation,
-          email,
-          salary,
-        }
-      );
-      console.log(response);
+        getUsers();
+        setNewUserModal(false);
+        setTimeout(() => {
+          setAlert({
+            message: "Użytkownik został dodany",
+            type: "success",
+            visible: true,
+          });
+        }, 150);
+      } catch (error) {
+        console.log(error.message);
 
-      const refUsers = await getUsers();
-      setNewUserModal(false);
-      setTimeout(() => {
         setAlert({
-          message: "Użytkownik został dodany",
-          type: "success",
+          message: "Coś poszło nie tak",
+          type: "error",
           visible: true,
         });
-      }, 150);
-    } catch (error) {
-      console.log(error.message);
-      setLoading(false);
-      setAlert({
-        message: "Coś poszło nie tak",
-        type: "error",
-        visible: true,
-      });
+      }
     }
   };
 
   return (
-    <div>
+    <div className="xd">
       <Modal
+        className="new-user-modal"
         title="Dodaj nowego użytkownika"
         visible={newUserModal}
         onOk={() => addUser(newUser)}

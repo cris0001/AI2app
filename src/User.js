@@ -11,6 +11,7 @@ import {
   Input,
   Checkbox,
 } from "antd";
+import { checkName, checkSurname, checkOccupation, checkEmail } from "./utils";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import EmailModal from "./EmailModal";
 
@@ -21,19 +22,16 @@ const User = ({
   getUsers,
   setAlert,
   emailLen,
-  setEditUserModal,
-  editUserModal,
-  setLoading,
   setEmailLen,
   setEmailModal,
   emailModal,
+  setEditUserModal,
 }) => {
   const [clickedUser, setClickedUser] = useState();
   const [newUser, setNewUser] = useState();
   const [modal, setModal] = useState(false);
   const [emailList, setEmailList] = useState([]);
 
-  console.log(emailList);
   const deleteUser = async (id) => {
     console.log(id);
 
@@ -49,13 +47,15 @@ const User = ({
         const response = await axios.delete(
           `http://www.workersappur.somee.com/api/workers/${id}`
         );
-        const xd = await getUsers();
-
-        setAlert({
-          message: "Użytkownik usunięty ",
-          type: "success",
-          visible: true,
-        });
+        //const xd = await getUsers();
+        getUsers();
+        setTimeout(() => {
+          setAlert({
+            message: "Użytkownik usunięty ",
+            type: "success",
+            visible: true,
+          });
+        }, 200);
       } catch (error) {
         console.log(error.message);
         setAlert({
@@ -93,33 +93,43 @@ const User = ({
     email,
     salary,
   }) => {
-    try {
-      const response = await axios.put(
-        `http://www.workersappur.somee.com/api/workers/${publicId}`,
-        {
-          name,
-          surname,
-          occupation,
-          email,
-          salary,
-        }
-      );
-      const xd = await getUsers();
+    if (
+      checkName(name) &&
+      checkSurname(surname) &&
+      checkOccupation(occupation) &&
+      checkEmail(email)
+    ) {
+      try {
+        const response = await axios.put(
+          `http://www.workersappur.somee.com/api/workers/${publicId}`,
+          {
+            name,
+            surname,
+            occupation,
+            email,
+            salary,
+          }
+        );
+        console.log(response);
+        getUsers();
 
-      setAlert({
-        message: "Dane użytkownika zostały zmienione",
-        type: "success",
-        visible: true,
-      });
-    } catch (error) {
-      console.log(error.message);
-      setAlert({
-        message: "Coś poszło nie tak",
-        type: "error",
-        visible: true,
-      });
+        setModal(false);
+        setAlert({
+          message: "Dane użytkownika zostały zmienione",
+          type: "success",
+          visible: true,
+        });
+      } catch (error) {
+        console.log(error.message);
+        setAlert({
+          message: "Coś poszło nie tak",
+          type: "error",
+          visible: true,
+        });
+      }
     }
   };
+
   return (
     <div>
       {users.map((user, index) => {
@@ -132,8 +142,9 @@ const User = ({
                 visible={modal}
                 onOk={() => {
                   editUser(newUser);
-                  setModal(false);
                 }}
+                okText="Zapisz dane"
+                cancelText="Anuluj"
                 onCancel={() => {
                   setModal(false);
                 }}
@@ -179,22 +190,34 @@ const User = ({
             ) : null}
             {emailModal ? (
               <EmailModal
+                setEmailLen={setEmailLen}
                 setEmailModal={setEmailModal}
+                emailLen={emailLen}
                 emailModal={emailModal}
                 emailList={emailList}
                 setAlert={setAlert}
+                setEmailList={setEmailList}
               />
             ) : null}
             <Row justify="space-between" align="middle">
-              <Col>
+              <Col span={1}>
                 <Checkbox
+                  checked={
+                    emailList.filter((e) => e.id === user.publicId).length > 0
+                  }
                   onChange={(e) => {
                     if (e.target.checked) {
-                      setEmailList([...emailList, user.publicId]);
+                      setEmailList([
+                        ...emailList,
+                        {
+                          id: user.publicId,
+                          name: `${user.name} ${user.surname}`,
+                        },
+                      ]);
                       setEmailLen(emailLen + 1);
                     } else {
                       const newList = emailList.filter(
-                        (e) => e !== user.publicId
+                        (e) => e.id !== user.publicId
                       );
                       setEmailList(newList);
                       setEmailLen(emailLen - 1);
@@ -202,23 +225,23 @@ const User = ({
                   }}
                 />
               </Col>
-              <Col>
+              <Col span={3}>
                 <Text level={5}>{user.name}</Text>
               </Col>
-              <Col>
+              <Col span={3}>
                 <Text level={5}>{user.surname}</Text>
               </Col>
-              <Col>
+              <Col span={3}>
                 <Text level={5}>{user.occupation}</Text>
               </Col>
-              <Col>
+              <Col span={5}>
                 <Text level={5}>{user.email}</Text>
               </Col>
-              <Col>
-                <Text level={5}>{user.salary}</Text>
+              <Col span={2}>
+                <Text level={5}>{user.salary} zł</Text>
               </Col>
 
-              <Col>
+              <Col span={2}>
                 <Row justify="space-between">
                   <Col>
                     <Button
