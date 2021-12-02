@@ -23,14 +23,18 @@ const EmailModal = ({
 
   const sendEmail = async ({ subject, title, message, ids }) => {
     try {
-      await axios.post("http://www.workersappur.somee.com/api/workers/sendemails", {
-        subject,
-        title,
-        message,
-        ids,
-      });
+      await axios.post(
+        "http://www.workersappur.somee.com/api/workers/sendemails",
+        {
+          subject,
+          title,
+          message,
+          ids,
+        }
+      );
 
       setEmailModal(false);
+      setEmailLen(0);
       setTimeout(() => {
         setAlert({
           message: "Wiadomość została wysłana",

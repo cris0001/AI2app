@@ -10,6 +10,7 @@ const NewUserModal = ({
   setLoading,
   getUsers,
   setAlert,
+  users,
 }) => {
   const [newUser, setNewUser] = useState({
     name: "",
@@ -19,24 +20,31 @@ const NewUserModal = ({
     salary: "",
   });
 
+  const chceckEmail = (email) => {
+    const allEmails = users.map((item) => item.email);
+
+    if (allEmails.includes(email)) {
+      alert("Podany aders jest już w użyciu");
+      return false;
+    }
+    return true;
+  };
   const addUser = async ({ name, surname, occupation, email, salary }) => {
     if (
+      chceckEmail(email) &&
       checkName(name) &&
       checkSurname(surname) &&
       checkOccupation(occupation) &&
       checkEmail(email)
     ) {
       try {
-        const response = await axios.post(
-          "http://www.workersappur.somee.com/api/workers",
-          {
-            name,
-            surname,
-            occupation,
-            email,
-            salary,
-          }
-        );
+        await axios.post("http://www.workersappur.somee.com/api/workers", {
+          name,
+          surname,
+          occupation,
+          email,
+          salary,
+        });
 
         getUsers();
         setNewUserModal(false);
@@ -48,7 +56,7 @@ const NewUserModal = ({
           });
         }, 150);
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
 
         setAlert({
           message: "Coś poszło nie tak",
@@ -86,7 +94,9 @@ const NewUserModal = ({
         />
         <Input
           value={newUser.occupation}
-          onChange={(e) => setNewUser({ ...newUser, occupation: e.target.value })}
+          onChange={(e) =>
+            setNewUser({ ...newUser, occupation: e.target.value })
+          }
           style={{ marginBottom: "25px" }}
           placeholder="Stanowisko"
         />

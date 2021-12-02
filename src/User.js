@@ -14,7 +14,6 @@ import {
 import { checkName, checkSurname, checkOccupation, checkEmail } from "./utils";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import EmailModal from "./EmailModal";
-import { sortByNameAZ, sortByNameZA } from "./utils";
 
 const { Text } = Typography;
 
@@ -26,15 +25,23 @@ const User = ({
   setEmailLen,
   setEmailModal,
   emailModal,
-  setUsers,
-  setEditUserModal,
-  sort,
+
   setSearchValue,
 }) => {
   const [clickedUser, setClickedUser] = useState();
   const [newUser, setNewUser] = useState();
   const [modal, setModal] = useState(false);
   const [emailList, setEmailList] = useState([]);
+
+  const chceckEmail = (email) => {
+    const allEmails = users.map((item) => item.email);
+
+    if (allEmails.includes(email) && email !== clickedUser.email) {
+      alert("Podany aders jest już w użyciu");
+      return false;
+    }
+    return true;
+  };
 
   const deleteUser = async (id) => {
     let allIds = emailList.map((email) => email.id);
@@ -47,7 +54,9 @@ const User = ({
       return null;
     } else
       try {
-        await axios.delete(`http://www.workersappur.somee.com/api/workers/${id}`);
+        await axios.delete(
+          `http://www.workersappur.somee.com/api/workers/${id}`
+        );
 
         getUsers();
         setEmailList([]);
@@ -88,32 +97,45 @@ const User = ({
     }
   };
 
-  const editUser = async ({ publicId, name, surname, occupation, email, salary }) => {
+  const editUser = async ({
+    publicId,
+    name,
+    surname,
+    occupation,
+    email,
+    salary,
+  }) => {
     if (
+      chceckEmail(email) &&
       checkName(name) &&
       checkSurname(surname) &&
       checkOccupation(occupation) &&
       checkEmail(email)
     ) {
       try {
-        await axios.put(`http://www.workersappur.somee.com/api/workers/${publicId}`, {
-          name,
-          surname,
-          occupation,
-          email,
-          salary,
-        });
+        await axios.put(
+          `http://www.workersappur.somee.com/api/workers/${publicId}`,
+          {
+            name,
+            surname,
+            occupation,
+            email,
+            salary,
+          }
+        );
 
         getUsers();
 
         setModal(false);
+
         setAlert({
           message: "Dane użytkownika zostały zmienione",
           type: "success",
           visible: true,
         });
       } catch (error) {
-        console.log(error.message);
+        console.log(error);
+
         setAlert({
           message: "Coś poszło nie tak",
           type: "error",
@@ -195,7 +217,9 @@ const User = ({
             <Row justify="space-between" align="middle">
               <Col span={1}>
                 <Checkbox
-                  checked={emailList.filter((e) => e.id === user.publicId).length > 0}
+                  checked={
+                    emailList.filter((e) => e.id === user.publicId).length > 0
+                  }
                   onChange={(e) => {
                     if (e.target.checked) {
                       setEmailList([
@@ -207,7 +231,9 @@ const User = ({
                       ]);
                       setEmailLen(emailLen + 1);
                     } else {
-                      const newList = emailList.filter((e) => e.id !== user.publicId);
+                      const newList = emailList.filter(
+                        (e) => e.id !== user.publicId
+                      );
                       setEmailList(newList);
                       setEmailLen(emailLen - 1);
                     }
@@ -239,7 +265,9 @@ const User = ({
                       }}
                       style={{ border: "none" }}
                     >
-                      <EditOutlined style={{ color: "#1890ff", fontSize: "20px" }} />
+                      <EditOutlined
+                        style={{ color: "#1890ff", fontSize: "20px" }}
+                      />
                     </Button>
                   </Col>
                   <Col>

@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Typography, Row, Col, Card, Button, Empty, Alert, Select, Input } from "antd";
+import {
+  Typography,
+  Row,
+  Col,
+  Card,
+  Button,
+  Empty,
+  Alert,
+  Select,
+  Input,
+} from "antd";
 import { FaEnvelope } from "react-icons/fa";
 import User from "./User";
 import NewUserModal from "./NewUserModal";
@@ -38,7 +48,9 @@ const UserList = () => {
 
   const getUsers = async () => {
     try {
-      const response = await axios.get("http://www.workersappur.somee.com/api/workers");
+      const response = await axios.get(
+        "http://www.workersappur.somee.com/api/workers"
+      );
 
       const data = response.data;
       console.log(data);
@@ -57,6 +69,12 @@ const UserList = () => {
   }, []);
 
   useEffect(() => {
+    if (emailLen === 0) {
+      setEmailModal(false);
+    }
+  }, [emailLen]);
+
+  useEffect(() => {
     const tmp = [...allUsers];
     const filtered = tmp.filter((user) => {
       if (
@@ -73,13 +91,14 @@ const UserList = () => {
     setUsers(filtered);
     console.log(filtered);
   }, [searchValue]);
+
   useEffect(() => {
     if (alert.visible) {
       setTimeout(() => {
         setAlert({ ...alert, visible: false });
       }, 3000);
     }
-  }, [alert.visible]);
+  }, [alert]);
   const handleChaneSearch = (e) => {
     setSearchValue(e.target.value);
   };
@@ -90,17 +109,21 @@ const UserList = () => {
       <div className="alert">
         {alert.visible ? (
           <Alert
-            style={{ padding: "20px 20px", fontSize: "15px" }}
+            style={{ padding: "10px 20px", fontSize: "15px" }}
             onClick={() => setAlert({ ...alert, visible: false })}
             message={alert.message}
             type={alert.type}
           />
         ) : null}
       </div>
-      <Row style={{ marginBottom: "10px", marginTop: "10px" }} justify="space-between">
+      <Row style={{ marginBottom: "10px" }} justify="space-between">
         <Col>
           {" "}
-          <Button size="large" onClick={() => setNewUserModal(true)} type="primary">
+          <Button
+            size="large"
+            onClick={() => setNewUserModal(true)}
+            type="primary"
+          >
             Dodaj użytkownika
           </Button>
           <Button
@@ -123,36 +146,25 @@ const UserList = () => {
             size="large"
             style={{ width: 250 }}
             onChange={(value) => {
-              if (value === "imieaz") {
-                setUsers(sortByNameAZ(users));
-              }
-              if (value === "imieza") {
-                setUsers(sortByNameZA(users));
-              }
-              if (value === "nazwiskoaz") {
-                setUsers(sortBySurnameAZ(users));
-              }
-              if (value === "nazwiskoza") {
-                setUsers(sortBySurnameZA(users));
-              }
-              if (value === "stanowiskoaz") {
-                setUsers(sortByOccAZ(users));
-              }
-              if (value === "stanowiskoza") {
-                setUsers(sortByOccZA(users));
-              }
-              if (value === "emailaz") {
-                setUsers(sortByEmailAZ(users));
-              }
-              if (value === "emailaz") {
-                setUsers(sortByEmailZA(users));
-              }
-              if (value === "pensjaaz") {
-                setUsers(sortBySalaryAZ(users));
-              }
-              if (value === "pensjaza") {
-                setUsers(sortBySalaryZA(users));
-              }
+              if (value === "imieaz") setUsers(sortByNameAZ(users));
+
+              if (value === "imieza") setUsers(sortByNameZA(users));
+
+              if (value === "nazwiskoaz") setUsers(sortBySurnameAZ(users));
+
+              if (value === "nazwiskoza") setUsers(sortBySurnameZA(users));
+
+              if (value === "stanowiskoaz") setUsers(sortByOccAZ(users));
+
+              if (value === "stanowiskoza") setUsers(sortByOccZA(users));
+
+              if (value === "emailaz") setUsers(sortByEmailAZ(users));
+
+              if (value === "emailaz") setUsers(sortByEmailZA(users));
+
+              if (value === "pensjaaz") setUsers(sortBySalaryAZ(users));
+
+              if (value === "pensjaza") setUsers(sortBySalaryZA(users));
             }}
             placeholder="sortuj wg:"
           >
@@ -177,6 +189,7 @@ const UserList = () => {
           setLoading={setLoading}
           getUsers={getUsers}
           setAlert={setAlert}
+          users={users}
         />
       ) : null}
 
