@@ -19,7 +19,6 @@ const NewUserModal = ({
     salary: "",
   });
 
-  console.log(newUser);
   const addUser = async ({ name, surname, occupation, email, salary }) => {
     if (
       checkName(name) &&
@@ -38,7 +37,6 @@ const NewUserModal = ({
             salary,
           }
         );
-        console.log(response);
 
         getUsers();
         setNewUserModal(false);
@@ -76,7 +74,6 @@ const NewUserModal = ({
           value={newUser.name}
           onChange={(e) => {
             setNewUser({ ...newUser, name: e.target.value });
-            console.log(newUser);
           }}
           style={{ marginBottom: "25px" }}
           placeholder="Imie"
@@ -89,9 +86,7 @@ const NewUserModal = ({
         />
         <Input
           value={newUser.occupation}
-          onChange={(e) =>
-            setNewUser({ ...newUser, occupation: e.target.value })
-          }
+          onChange={(e) => setNewUser({ ...newUser, occupation: e.target.value })}
           style={{ marginBottom: "25px" }}
           placeholder="Stanowisko"
         />

@@ -15,17 +15,15 @@ const UserList = () => {
   const [editUserModal, setEditUserModal] = useState(false);
   const [emailModal, setEmailModal] = useState(false);
   const [alert, setAlert] = useState({
-    message: "xdsdsd",
-    type: "warning",
+    message: "",
+    type: "",
     visible: false,
   });
   const [emailLen, setEmailLen] = useState(0);
 
   const getUsers = async () => {
     try {
-      const response = await axios.get(
-        "http://www.workersappur.somee.com/api/workers"
-      );
+      const response = await axios.get("http://www.workersappur.somee.com/api/workers");
 
       const data = response.data;
       console.log(data);
@@ -69,11 +67,7 @@ const UserList = () => {
       <Row style={{ marginBottom: "10px" }} justify="space-between">
         <Col>
           {" "}
-          <Button
-            size="large"
-            onClick={() => setNewUserModal(true)}
-            type="primary"
-          >
+          <Button size="large" onClick={() => setNewUserModal(true)} type="primary">
             Dodaj użytkownika
           </Button>
           <Button

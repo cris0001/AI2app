@@ -7,7 +7,6 @@ const Loading = () => {
       <div className="example">
         <Spin size="large" />
       </div>
-      ,
     </div>
   );
 };

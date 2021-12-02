@@ -16,13 +16,10 @@ const EmailModal = ({
   const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
-  console.log(emailList);
 
   const email = { subject, title, message, ids };
-  //console.log(email);
 
   const sendEmail = async ({ subject, title, message, ids }) => {
-    console.log(ids);
     try {
       const response = await axios.post(
         "http://www.workersappur.somee.com/api/workers/sendemails",
@@ -53,10 +50,17 @@ const EmailModal = ({
       });
     }
   };
+  const handleRemoveUser = (item) => {
+    let tmpList = [...emailList];
+    tmpList = tmpList.filter((e) => e.id !== item.id);
+
+    setIds(tmpList.map((item) => item.id));
+    setEmailLen(emailLen - 1);
+    setEmailList(tmpList);
+  };
 
   return (
     <div>
-      {" "}
       <Modal
         style={{ minHeight: "525px" }}
         title="Grupowe wysyłanie wiadomości"
@@ -74,18 +78,11 @@ const EmailModal = ({
           {emailList.map((item, index) => {
             return (
               <Tag
-                onClose={() => {
-                  const newList = [...emailList].filter(
-                    (e) => e.id !== item.id
-                  );
-                  console.log(newList);
-                  setEmailList(newList);
-                  setIds(newList.map((item) => item.id));
-                  setEmailLen(emailLen - 1);
-                }}
-                key={index}
-                color="blue"
+                style={{ marginBottom: "6px" }}
                 closable
+                key={item.id}
+                color="blue"
+                onClose={() => handleRemoveUser(item)}
               >
                 {item.name}
               </Tag>
