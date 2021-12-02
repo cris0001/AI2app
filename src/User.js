@@ -14,6 +14,7 @@ import {
 import { checkName, checkSurname, checkOccupation, checkEmail } from "./utils";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import EmailModal from "./EmailModal";
+import { sortByNameAZ, sortByNameZA } from "./utils";
 
 const { Text } = Typography;
 
@@ -25,7 +26,9 @@ const User = ({
   setEmailLen,
   setEmailModal,
   emailModal,
+  setUsers,
   setEditUserModal,
+  sort,
 }) => {
   const [clickedUser, setClickedUser] = useState();
   const [newUser, setNewUser] = useState();

@@ -19,6 +19,8 @@ const EmailModal = ({
 
   const email = { subject, title, message, ids };
 
+  console.log(emailLen);
+
   const sendEmail = async ({ subject, title, message, ids }) => {
     try {
       const response = await axios.post(
