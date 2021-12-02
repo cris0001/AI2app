@@ -14,6 +14,7 @@ import {
 import { checkName, checkSurname, checkOccupation, checkEmail } from "./utils";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import EmailModal from "./EmailModal";
+import { sortByNameAZ, sortByNameZA } from "./utils";
 
 const { Text } = Typography;
 
@@ -25,16 +26,19 @@ const User = ({
   setEmailLen,
   setEmailModal,
   emailModal,
+  setUsers,
   setEditUserModal,
+  sort,
+  setSearchValue,
 }) => {
   const [clickedUser, setClickedUser] = useState();
   const [newUser, setNewUser] = useState();
   const [modal, setModal] = useState(false);
   const [emailList, setEmailList] = useState([]);
-  const [searchValue, setSearchValue] = useState("");
 
   const deleteUser = async (id) => {
-    if (emailList.includes(id)) {
+    let allIds = emailList.map((email) => email.id);
+    if (allIds.includes(id)) {
       setAlert({
         message: "Odznacz użytkownika aby go usunąć!",
         type: "warning",
@@ -46,6 +50,8 @@ const User = ({
         await axios.delete(`http://www.workersappur.somee.com/api/workers/${id}`);
 
         getUsers();
+        setEmailList([]);
+        setSearchValue("");
         setTimeout(() => {
           setAlert({
             message: "Użytkownik usunięty ",
@@ -117,12 +123,8 @@ const User = ({
     }
   };
 
-  const handleChaneSearch = (e) => {
-    setSearchValue(e.target.value);
-  };
   return (
     <div>
-      <Input value={searchValue} onChange={handleChaneSearch} />
       {users.map((user, index) => {
         return (
           <Card key={index}>
