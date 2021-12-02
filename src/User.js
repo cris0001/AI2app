@@ -31,6 +31,7 @@ const User = ({
   const [newUser, setNewUser] = useState();
   const [modal, setModal] = useState(false);
   const [emailList, setEmailList] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
 
   const deleteUser = async (id) => {
     if (emailList.includes(id)) {
@@ -42,9 +43,7 @@ const User = ({
       return null;
     } else
       try {
-        const response = await axios.delete(
-          `http://www.workersappur.somee.com/api/workers/${id}`
-        );
+        await axios.delete(`http://www.workersappur.somee.com/api/workers/${id}`);
 
         getUsers();
         setTimeout(() => {
@@ -91,16 +90,13 @@ const User = ({
       checkEmail(email)
     ) {
       try {
-        const response = await axios.put(
-          `http://www.workersappur.somee.com/api/workers/${publicId}`,
-          {
-            name,
-            surname,
-            occupation,
-            email,
-            salary,
-          }
-        );
+        await axios.put(`http://www.workersappur.somee.com/api/workers/${publicId}`, {
+          name,
+          surname,
+          occupation,
+          email,
+          salary,
+        });
 
         getUsers();
 
@@ -121,8 +117,12 @@ const User = ({
     }
   };
 
+  const handleChaneSearch = (e) => {
+    setSearchValue(e.target.value);
+  };
   return (
     <div>
+      <Input value={searchValue} onChange={handleChaneSearch} />
       {users.map((user, index) => {
         return (
           <Card key={index}>
@@ -242,7 +242,7 @@ const User = ({
                   </Col>
                   <Col>
                     <Popconfirm
-                      title="Usunąć tego ożytkownika?"
+                      title="Usunąć tego użytkownika?"
                       onConfirm={() => deleteUser(user.publicId)}
                       okText="Tak"
                       cancelText="Nie"

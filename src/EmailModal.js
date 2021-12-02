@@ -21,16 +21,13 @@ const EmailModal = ({
 
   const sendEmail = async ({ subject, title, message, ids }) => {
     try {
-      const response = await axios.post(
-        "http://www.workersappur.somee.com/api/workers/sendemails",
-        {
-          subject,
-          title,
-          message,
-          ids,
-        }
-      );
-      console.log(response);
+      await axios.post("http://www.workersappur.somee.com/api/workers/sendemails", {
+        subject,
+        title,
+        message,
+        ids,
+      });
+
       setEmailModal(false);
       setTimeout(() => {
         setAlert({
@@ -39,10 +36,9 @@ const EmailModal = ({
           visible: true,
         });
       }, 150);
+
       setEmailList([]);
     } catch (error) {
-      console.log(error.message);
-
       setAlert({
         message: "Coś poszło nie tak",
         type: "error",
@@ -71,8 +67,8 @@ const EmailModal = ({
           setEmailList([]);
           setEmailLen(0);
         }}
-        okText="wyślij"
-        cancelText="anuluj"
+        okText="Wyślij"
+        cancelText="Anuluj"
       >
         <div className="tag">
           {emailList.map((item, index) => {

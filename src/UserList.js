@@ -99,7 +99,7 @@ const UserList = () => {
             <FaEnvelope style={{ fontSize: "20px" }} />
           </Col>
           <Col span={3}>
-            <Title level={5}>Imie</Title>
+            <Title level={5}>Imię</Title>
           </Col>
           <Col span={3}>
             <Title level={5}>Nazwisko</Title>
